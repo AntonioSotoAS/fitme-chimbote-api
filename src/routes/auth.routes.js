@@ -3,7 +3,7 @@ import { login, register } from "../controllers/auth.controller.js";
 import { registerRol } from "../controllers/role.controller.js";
 import { registerShift } from "../controllers/shift.controller.js";
 import { registerMembershipType } from "../controllers/membershipType.controller.js";
-import { registerClient } from "../controllers/client.controller.js";
+import { registerClient, getAllClientsWithLatestMembership } from "../controllers/client.controller.js";
 import { registerMembership } from "../controllers/membership.controller.js";
 
 const router = Router();
@@ -22,9 +22,14 @@ router.post("/membership-type", registerMembershipType);
 
 //Client
 router.post("/client", registerClient);
+router.get("/client", getAllClientsWithLatestMembership);
+
 
 //Membership
 router.post("/membership", registerMembership);
+
+
+
 
 
 
