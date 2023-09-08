@@ -1,5 +1,5 @@
 import Membership from "../models/Membership.js";
-import Client from "../models/Client.js";
+
 
 export const registerMembership = async (req, res) => {
   const {

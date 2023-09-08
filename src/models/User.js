@@ -2,6 +2,10 @@ import { Schema, mongoose } from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    dni: {
+      type: Number,
+      requiered: true,
+    },
     firstName: {
       type: String,
       trim: true,
