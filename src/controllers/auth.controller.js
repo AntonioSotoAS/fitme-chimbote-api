@@ -1,8 +1,11 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { createAccessToken } from "../libs/jwt.js";
+import jwt from "jsonwebtoken"; 
+import { TOKEN_SECRET } from "../config.js";
 
 export const register = async (req, res) => {
+  console.log(req.body);
   const {
     dni,
     firstName,
@@ -12,10 +15,14 @@ export const register = async (req, res) => {
     password,
     photo,
     username,
+    email,
     Role,
   } = req.body;
 
   try {
+    const userFound = await User.findOne({ email });
+    if (userFound)
+      return res.status(400).json({ message: ["the email is already in use"] });
     const passwordHash = await bcrypt.hash(password, 10);
 
     const newUser = new User({
@@ -27,6 +34,7 @@ export const register = async (req, res) => {
       password: passwordHash,
       photo,
       username,
+      email,
       Role,
     });
 
@@ -43,6 +51,7 @@ export const register = async (req, res) => {
       secondSurName: userSave.secondName,
       photo: userSave.photo,
       username: userSave.username,
+      email: userSave.email,
       Role: userSave.Role,
     });
   } catch (error) {
@@ -51,12 +60,12 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const userFound = await User.findOne({ username });
+    const userFound = await User.findOne({ email });
 
-    if (!userFound) return res.status(400).json({ message: "User not found" });
+    if (!userFound) return res.status(400).json({ message: "Email not found" });
 
     const isMatch = await bcrypt.compare(password, userFound.password);
 
@@ -74,6 +83,7 @@ export const login = async (req, res) => {
       secondSurName: userFound.secondName,
       photo: userFound.photo,
       username: userFound.username,
+      email: userFound.email,
       Role: userFound.Role,
     });
   } catch (error) {
@@ -101,7 +111,24 @@ export const profile = async (req, res) => {
     surName: userFound.surName,
     secondSurName: userFound.secondName,
     username: userFound.username,
+    email: userFound.email,
     photo: userFound.photo,
     Rol: userFound.Rol,
+  });
+};
+
+export const verifyToken = async (req, res) => {
+  const { token } = req.cookies;
+  if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+  jwt.verify(token, TOKEN_SECRET, async (err, user) => {
+    if (err) return res.status(401).json({ message: "Unauthorized" });
+    const userFound = await User.findById(user.id);
+    if (!userFound) return res.status(401).json({ message: "Unauthorized" });
+    return res.json({
+      id: userFound._id,
+      username: userFound.username,
+      email: userFound.email,
+    });
   });
 };

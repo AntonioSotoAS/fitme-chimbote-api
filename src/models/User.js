@@ -3,7 +3,8 @@ import { Schema, mongoose } from "mongoose";
 const userSchema = new mongoose.Schema(
   {
     dni: {
-      type: Number,
+      type: String,
+      trim: true,
       requiered: true,
     },
     firstName: {
@@ -36,6 +37,11 @@ const userSchema = new mongoose.Schema(
       requiered: true,
     },
     username: {
+      type: String,
+      trim: true,
+      requiered: true,
+    },
+    email: {
       type: String,
       trim: true,
       requiered: true,

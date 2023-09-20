@@ -3,7 +3,8 @@ import { mongoose } from "mongoose";
 const clientSchema = new mongoose.Schema(
   {
     dni: {
-      type: Number,
+      type: String,
+      trim: true,
       requiered: true,
     },
     firstName: {
