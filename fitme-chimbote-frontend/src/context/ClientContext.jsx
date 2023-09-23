@@ -1,5 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getClientRequest, registerClientRequest } from "../api/client";
+import {
+  getClientRequest,
+  registerClientRequest,
+  updateClientRequest,
+} from "../api/client";
 
 const ClientContext = createContext();
 
@@ -39,8 +43,20 @@ export function ClientProvider({ children }) {
     }
   };
 
+  const updateClient = async (client) => {
+    try {
+      const res = await updateClientRequest(client);
+      return res; // Devuelve la respuesta completa
+    } catch (error) {
+      console.error("Error al crear el cliente:", error);
+      throw error; // Puedes manejar el error aquí o dejar que se propague
+    }
+  };
+
   return (
-    <ClientContext.Provider value={{ clients, createClient, setClients }}>
+    <ClientContext.Provider
+      value={{ clients, createClient, setClients, updateClient }}
+    >
       {children}
     </ClientContext.Provider>
   );

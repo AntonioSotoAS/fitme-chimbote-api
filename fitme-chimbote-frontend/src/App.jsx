@@ -6,12 +6,13 @@ import {
 } from "react-router-dom";
 import Sidebar from "./components/Siderbar";
 import { AuthProvider } from "./context/AuthContext";
-import TableClient from "./components/TableClient";
+import TableClient from "./components/client/TableClient";
 import TableUser from "./components/TableUser";
 import TableMembership from "./components/TableMembership";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import { ClientProvider } from "./context/ClientContext";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           </Routes>
         </Router>
       </ClientProvider>
+      <Toaster position="bottom-right" reverseOrder={true} />
     </AuthProvider>
   );
 }

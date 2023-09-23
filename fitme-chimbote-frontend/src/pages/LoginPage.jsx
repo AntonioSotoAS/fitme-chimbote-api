@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import LogoFitme from "../assets/img/logo-fitme.png";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 function LoginPage() {
   const {
@@ -15,10 +16,10 @@ function LoginPage() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log(data);
+      // Realizar la solicitud de inicio de sesión
       await signin(data);
     } catch (error) {
-      console.error(error);
+      console.error("Error al iniciar sesión:", error);
     }
   });
 

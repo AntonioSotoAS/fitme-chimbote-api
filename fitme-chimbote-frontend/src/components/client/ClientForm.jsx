@@ -2,26 +2,34 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import Exit from "../../assets/img/exit.png";
 import { useClients } from "../../context/ClientContext";
+import { toast } from "react-hot-toast";
 
 function ClientForm({ onClose }) {
   const { register, handleSubmit } = useForm();
-  const { createClient, clients } = useClients();
+  const { createClient, clients, setClients } = useClients();
   console.log(clients);
 
   const onSubmit = handleSubmit(async (values) => {
     console.log(values);
 
     try {
-      values.photo = values.photo[0].name; // Obtiene el nombre del archivo seleccionado
+      //ejemplo 
+      values.photo ="https://www.dzoom.org.es/wp-content/uploads/2020/02/portada-foto-perfil-redes-sociales-consejos.jpg"
+      //values.photo = values.photo[0].name; // Obtiene el nombre del archivo seleccionado
       console.log("Nombre del archivo seleccionado:", values.photo);
 
       // Utiliza la función registerClientRequest para realizar la solicitud
       const response = await createClient(values);
 
       console.log(response.data);
-      onClose(response.data); 
+
+      setClients([...clients, response.data]);
+      console.log("Llegó a la función onSubmit");
+      toast.success("Usuario Registrado!");
     } catch (error) {
       console.error("Error al registrar:", error);
+    } finally {
+      onClose();
     }
   });
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { loginRequest } from "../api/auth";
+import { toast } from "react-hot-toast";
 
 function LoginForm() {
   const { register, handleSubmit } = useForm();
@@ -20,12 +21,20 @@ function LoginForm() {
         console.log(response.data);
         // Cerrar el modal u realizar alguna otra acción después del registro
         onClose();
+      } else if (response.status === 400) {
+        console.log("error 400 entro")
       } else {
+        console.error("entro al else");
+        toast.error("This didn't work.");
+
         // La solicitud falló
         console.error("Error al registrar:", response.statusText);
       }
     } catch (error) {
       console.error("Error al registrar:", error);
+      console.error("entro al error");
+
+      toast.error("This didn't work.");
     }
   });
 

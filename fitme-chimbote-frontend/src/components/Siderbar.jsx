@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import TableClient from "./TableClient";
+import TableClient from "./client/TableClient";
 import {
   BrowserRouter,
   Routes,

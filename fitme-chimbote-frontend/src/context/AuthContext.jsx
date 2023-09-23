@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { loginRequest, registerRequest, verityTokenRequest } from "../api/auth";
 import Cookies from "js-cookie";
+import { toast } from "react-hot-toast";
 
 export const AuthContext = createContext();
 
@@ -69,9 +70,11 @@ export const AuthProvider = ({ children }) => {
       console.log(res);
       setIsAuthenticated(true);
       setUser(res.data);
+      toast.success("Inicio de sesión exitoso");
     } catch (error) {
       console.error(error);
       setErrors(error.response.data);
+      toast.error("Correo y/o Contraseña Incorrecta");
     }
   };
   return (

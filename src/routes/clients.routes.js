@@ -23,7 +23,7 @@ router.get("/client", authRequired, getAllClients);
 router.get("/client", authRequired, getAllClientsWithLatestMembership);
 router.delete("/client/:id", authRequired, deleteByIdClient);
 router.put(
-  "/client//:id",
+  "/client/:id",
   authRequired,
   validateSchema(clientSchema),
   updateClient
