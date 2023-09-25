@@ -36,7 +36,11 @@ export const membershipRegister = async (req, res) => {
 // Get all memberships
 export const getAllMembership = async (req, res) => {
   try {
-    const memberships = await Membership.find();
+    const memberships = await Membership.find()
+      .populate("Client")
+      .populate("Shift")
+      .populate("TypeMembership");
+
     res.json(memberships);
   } catch (error) {
     console.error(error);

@@ -8,7 +8,7 @@ import {
   Link,
   Navigate,
 } from "react-router-dom";
-import TableMembership from "./TableMembership";
+import TableMembership from "./membership/TableMembership";
 import LogoFitme from "../assets/img/logo-fitme.png";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";

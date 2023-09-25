@@ -19,7 +19,7 @@ router.post(
   validateSchema(membershipSchema),
   membershipRegister
 );
-router.get("/membership", authRequired, getAllMembership);
+router.get("/membership/all", authRequired, getAllMembership);
 router.delete("/membership/:id", authRequired, deleteMembership);
 router.put(
   "/membership/:id",
