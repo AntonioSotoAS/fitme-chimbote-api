@@ -6,14 +6,14 @@ import { toast } from "react-hot-toast";
 
 function ClientEditModal({ onClose, client }) {
   const { register, handleSubmit, setValue } = useForm();
-  const { updateClient, clients, setClients } = useClients();
+  const { updateClient, clients, setClients, setClient } = useClients();
 
   const [selectedFile, setSelectedFile] = useState(null);
 
   // Llena los campos del formulario con los datos del cliente a editar
   React.useEffect(() => {
     if (client) {
-      console.log(client);
+      console.log("Cliente recibido:", client); // Agrega esta línea para depurar
       setValue("dni", client.dni);
       setValue("firstName", client.firstName);
       setValue("secondName", client.secondName);
@@ -28,9 +28,9 @@ function ClientEditModal({ onClose, client }) {
     setSelectedFile(file);
   };
 
-  const onSubmit = handleSubmit(async (values) => {
+  const onSubmit = handleSubmit(async (formData) => {
     try {
-      if (client) {
+      if (formData) {
         if (selectedFile) {
           // Si se selecciona un nuevo archivo, puedes cargarlo aquí
           // Ejemplo de cómo cargar la foto, asegúrate de ajustarlo a tu API:
@@ -39,15 +39,41 @@ function ClientEditModal({ onClose, client }) {
           // await uploadPhoto(client._id, formData);
         }
 
-        // Luego, puedes actualizar los otros campos del cliente
-        const updatedClient = await updateClient(values); // Pasar el ID del cliente aquí
+        // Crear un nuevo objeto cliente con los datos del formulario
+        const updatedClient = {
+          dni: formData.dni,
+          firstName: formData.firstName,
+          secondName: formData.secondName,
+          surName: formData.surName,
+          secondSurName: formData.secondSurName,
+          // Agrega otros campos del cliente aquí si es necesario
+        };
 
-        // Actualizamos el cliente en la lista
-        const updatedClients = clients.map((c) =>
-          c._id === updatedClient._id ? updatedClient : c
-        );
-        setClients(updatedClients);
-        toast.success("Cliente actualizado exitosamente.");
+        // Compara si los campos han cambiado
+        const fieldsChanged =
+          updatedClient.dni !== client.dni ||
+          updatedClient.firstName !== client.firstName ||
+          updatedClient.secondName !== client.secondName ||
+          updatedClient.surName !== client.surName ||
+          updatedClient.secondSurName !== client.secondSurName;
+
+        if (fieldsChanged) {
+          // Si alguno de los campos ha cambiado, realiza la solicitud de actualización
+          // Setea el objeto client con los datos del formulario
+          setClient(updatedClient);
+
+          // Luego, puedes enviar el cliente actualizado al servidor
+          const response = await updateClient(client._id, updatedClient);
+
+          // Actualizamos el cliente en la lista
+          const updatedClients = clients.map((c) =>
+            c._id === response.data._id ? response.data : c
+          );
+          setClients(updatedClients);
+          toast.success("Cliente actualizado exitosamente.");
+        } else {
+          console.log("No se realizaron cambios en el cliente.");
+        }
       }
     } catch (error) {
       console.error("Error al actualizar el cliente:", error);
@@ -112,6 +138,15 @@ function ClientEditModal({ onClose, client }) {
               placeholder="Segundo Apellido"
             />
           </div>
+        </div>
+        <div className="mb-3">
+          <label className="text-white block mb-1">DNI</label>
+          <input
+            type="text"
+            {...register("dni", { required: true })}
+            className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md"
+            placeholder="Número de Identificación (DNI)"
+          />
         </div>
         <button
           type="submit"

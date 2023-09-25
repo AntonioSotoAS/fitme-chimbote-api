@@ -13,22 +13,25 @@ import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import { ClientProvider } from "./context/ClientContext";
 import { Toaster } from "react-hot-toast";
+import { DashboardProvider } from "./context/DashboardContext";
 
 function App() {
   return (
     <AuthProvider>
       <ClientProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/home/*" element={<Sidebar />}>
-              <Route path="clients/all" element={<TableClient />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="user/all" element={<TableUser />} />
-              <Route path="membership/all" element={<TableMembership />} />
-            </Route>
-          </Routes>
-        </Router>
+        <DashboardProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/home/*" element={<Sidebar />}>
+                <Route path="clients/all" element={<TableClient />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="user/all" element={<TableUser />} />
+                <Route path="membership/all" element={<TableMembership />} />
+              </Route>
+            </Routes>
+          </Router>
+        </DashboardProvider>
       </ClientProvider>
       <Toaster position="bottom-right" reverseOrder={true} />
     </AuthProvider>

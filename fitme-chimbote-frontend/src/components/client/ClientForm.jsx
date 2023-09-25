@@ -11,15 +11,36 @@ function ClientForm({ onClose }) {
 
   const onSubmit = handleSubmit(async (values) => {
     console.log(values);
+    var photoName = "";
 
     try {
-      //ejemplo 
-      values.photo ="https://www.dzoom.org.es/wp-content/uploads/2020/02/portada-foto-perfil-redes-sociales-consejos.jpg"
-      //values.photo = values.photo[0].name; // Obtiene el nombre del archivo seleccionado
-      console.log("Nombre del archivo seleccionado:", values.photo);
+      // Verifica si se proporcionó una foto; si no, establece una foto predeterminada
+      if (values.photo && values.photo.length > 0) {
+        // Se seleccionó al menos un archivo
+        console.log("Se seleccionó un archivo");
+        console.log("Valor de values.photo:", values.photo);
+        photoName = values.photo[0].name;
+      } else {
+        // No se seleccionó ningún archivo
+        console.log("No se seleccionó ningún archivo");
+        photoName =
+          "https://www.dzoom.org.es/wp-content/uploads/2020/02/portada-foto-perfil-redes-sociales-consejos.jpg";
+      }
 
-      // Utiliza la función registerClientRequest para realizar la solicitud
-      const response = await createClient(values);
+      const createClientData = {
+        dni: values.dni,
+        firstName: values.firstName,
+        secondName: values.secondName,
+        surName: values.surName,
+        secondSurName: values.secondSurName,
+        photo: photoName, // Establece el nombre de la foto en el objeto createClientData
+        // Agrega otros campos del cliente aquí si es necesario
+      };
+
+      console.log("create client", JSON.stringify(createClientData, null, 2));
+
+      // Utiliza la función createClientRequest para realizar la solicitud
+      const response = await createClient(createClientData);
 
       console.log(response.data);
 
@@ -78,7 +99,7 @@ function ClientForm({ onClose }) {
         <input
           type="file"
           accept="image/*"
-          {...register("photo", { required: true })}
+          {...register("photo")}
           className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md my-2"
         />
         <button
