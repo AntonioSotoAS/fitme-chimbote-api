@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
 import {
   registerClient,
-  getAllClientsWithLatestMembership,
+  getClientsWithMembershipStatus,
   deleteByIdClient,
   getAllClients,
   updateClient,
@@ -19,14 +19,9 @@ router.post(
   validateSchema(clientSchema),
   registerClient
 );
-router.get("/client", authRequired, getAllClients);
-router.get("/client", authRequired, getAllClientsWithLatestMembership);
+// router.get("/client", authRequired, getAllClients);
+router.get("/client", authRequired, getClientsWithMembershipStatus);
 router.delete("/client/:id", authRequired, deleteByIdClient);
-router.put(
-  "/client/:id",
-  authRequired,
-  validateSchema(clientSchema),
-  updateClient
-);
+router.put("/client/:id",authRequired,validateSchema(clientSchema),updateClient);
 
 export default router;

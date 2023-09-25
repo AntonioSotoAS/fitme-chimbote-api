@@ -130,3 +130,72 @@ export const getAllClientsWithLatestMembership = async (req, res) => {
     res.status(500).send("Error interno del servidor");
   }
 };
+
+export const getClientsWithMembershipStatus = async (req, res) => {
+  try {
+    const clientsWithStatus = await Client.aggregate([
+      {
+        $lookup: {
+          from: "memberships", // Nombre de la colección de membresías
+          localField: "_id",
+          foreignField: "Client",
+          as: "memberships",
+        },
+      },
+      {
+        $unwind: {
+          path: "$memberships",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $sort: {
+          "memberships.endDate": -1, // Ordena por fecha de vencimiento en orden descendente
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          Client: { $first: "$$ROOT" },
+          latestMembership: { $first: "$memberships" }, // Conserva la membresía más reciente
+        },
+      },
+      {
+        $addFields: {
+          status: {
+            $cond: {
+              if: {
+                $and: [
+                  { $gte: ["$latestMembership.endDate", new Date()] }, // Comprueba si la fecha de vencimiento es mayor o igual a la fecha actual
+                  { $eq: ["$latestMembership.state", true] }, // Comprueba si el estado de la membresía es verdadero
+                ],
+              },
+              then: true,
+              else: false,
+            },
+          },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              "$Client",
+              { latestMembership: "$latestMembership" },
+            ],
+          }, // Combina información del cliente y membresía más reciente
+        },
+      },
+      {
+        $project: {
+          memberships: 0, // Excluye el objeto "memberships"
+        },
+      },
+    ]);
+
+    res.json(clientsWithStatus);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error interno del servidor");
+  }
+};

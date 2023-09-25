@@ -29,7 +29,7 @@ const clientSchema = new mongoose.Schema(
     photo: {
       type: String,
       trim: true,
-      requiered: true,
+      requiered: false,
     },
   },
   {
