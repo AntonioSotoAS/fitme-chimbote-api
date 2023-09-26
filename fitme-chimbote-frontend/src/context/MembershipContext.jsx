@@ -19,6 +19,7 @@ export const useMemberships = () => {
 
 export function MembershipProvider({ children }) {
   const [memberships, setMemberships] = useState([]);
+  const [membership, setMembership] = useState([]);
   const [selectedMembership, setSelectedMembership] = useState(null);
 
   useEffect(() => {
@@ -37,6 +38,8 @@ export function MembershipProvider({ children }) {
 
   const createMembership = async (membership) => {
     try {
+      console.log("create membership: " + JSON.stringify(membership));
+
       const response = await membershipRequest(membership);
       setMemberships([...memberships, response.data]);
       return response;
@@ -84,6 +87,8 @@ export function MembershipProvider({ children }) {
         selectedMembership,
         setSelectedMembership,
         setMemberships,
+        setMembership,
+        membership,
       }}
     >
       {children}

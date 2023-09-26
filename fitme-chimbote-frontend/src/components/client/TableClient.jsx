@@ -69,6 +69,16 @@ function TableClient() {
       >
         Agregar Cliente
       </button>
+      <div className="mt-5">
+        <input
+          type="text"
+          placeholder="Buscar por DNI"
+          maxLength="8"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="bg-zinc-800 px-3 py-4 border border-black rounded-md mb-4 text-white"
+        />
+      </div>
 
       {/* Modal de registro de cliente */}
       {isModalOpen && (
@@ -103,13 +113,6 @@ function TableClient() {
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
           <div className="overflow-hidden">
-            <input
-              type="text"
-              placeholder="Buscar por DNI"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-zinc-800 px-3 py-1 border border-black rounded-md mb-4 text-white"
-            />
             <table className="min-w-full text-center text-sm font-light">
               <thead className="border-b bg-neutral-800 font-medium text-white dark:border-neutral-500 dark:bg-neutral-900">
                 <tr>

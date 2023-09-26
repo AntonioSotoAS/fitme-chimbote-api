@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Exit from "../../assets/img/exit.png";
 import { toast } from "react-hot-toast";
@@ -12,19 +12,16 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import { useClients } from "../../context/ClientContext";
 
-function MembershipForm({ onClose }) {
-  const { register, handleSubmit } = useForm();
+function MembershipEditModal({ onClose, membership }) {
+  const { register, handleSubmit, setValue } = useForm();
   const { createMembership, memberships, setMemberships } = useMemberships();
   const [endDate, setEndDate] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const { shifts } = useShifts();
   const { membershipTypes } = useMembershipTypes();
-  const [selectedClient, setSelectedClient] = useState(null);
-  const [selectedShift, setSelectedShift] = useState(null);
-  const [selectedMembershipType, setSelectedMembershipType] = useState(null);
   const { clients } = useClients();
-
   // Define opciones para el autocompletado (esto puede variar según tus datos)
+
   const clientOptions = clients.map((client) => ({
     value: client._id,
     label: client.dni,
@@ -39,6 +36,39 @@ function MembershipForm({ onClose }) {
     value: membershipType._id,
     label: membershipType.typeMembership,
   }));
+
+  const defaultOptionClient = clientOptions.find(
+    (optionClient) => optionClient.value === membership.Client._id
+  );
+  const defaultOptionShift = shiftOptions.find(
+    (optionShift) => optionShift.value === membership.Shift._id
+  );
+
+  const defaultOptionMembershipType = membershipTypesOptions.find(
+    (optionMembershipType) =>
+      optionMembershipType.value === membership.TypeMembership._id
+  );
+
+  const [selectedClient, setSelectedClient] = useState(defaultOptionClient);
+  const [selectedShift, setSelectedShift] = useState(defaultOptionShift);
+  const [selectedMembershipType, setSelectedMembershipType] = useState(
+    defaultOptionMembershipType
+  );
+
+  useEffect(() => {
+    if (membership) {
+      setValue("amount", membership.amount);
+      setValue("attendance", membership.attendance);
+      // Establece las fechas de inicio y fin aquí
+      console.log("prubea  " + new Date(membership.startDate));
+      const start = new Date(membership.startDate);
+      setStartDate(start.getTime());
+      console.log(start.getTime());
+      const end = new Date(membership.endDate);
+      console.log(end.getTime());
+      setStartDate(end.getTime());
+    }
+  }, [membership, setValue]);
 
   console.log("shifts: " + JSON.stringify(shiftOptions));
   console.log("membershipTypes: " + JSON.stringify(membershipTypesOptions));
@@ -88,16 +118,15 @@ function MembershipForm({ onClose }) {
           Client: selectedClient.value,
           Shift: selectedShift.value,
           TypeMembership: selectedMembershipType.value,
-          amount: parseFloat(values.amount),
-          attendance: 0,
+          amount: values.amount,
+          attendance: values.attendance,
           startDate: startDate.toISOString().substring(0, 10),
           endDate: endDate.toISOString().substring(0, 10),
           state: true,
         };
-        console.log("lestoy pasando esto: " + createMembershipData);
+        console.log(createMembershipData);
 
-        const response = await createMembership(createMembershipData);
-        console.log("date response" + response.date);
+        // const response = await createMembership(createMembershipData);
 
         setMemberships([...memberships, createMembershipData]);
         toast.success("Usuario Registrado!");
@@ -110,14 +139,14 @@ function MembershipForm({ onClose }) {
   });
 
   return (
-    <div className="bg-zinc-800 max-w-md rounded-md p-6">
+    <div className="bg-zinc-800 max-w-md rounded-md">
       {/* Botón para cerrar el modal estilo close icon */}
-      <h1 className="text-white text-2xl sm:text-sm md:text-xl lg:text-3xl xl:text-4xl font-semibold text-center mb-3 mr-6">
+      <h1 className="text-white text-2xl sm:text-sm md:text-xl lg:text-3xl xl:text-4xl font-semibold text-center mb-3">
         Registrar Membresia
       </h1>
 
       <button onClick={onClose} className="absolute top-4 right-2">
-        <img src={Exit} className="h-8" alt="X" />
+        <img src={Exit} className="h-8 mr-3" alt="X" />
       </button>
 
       <form onSubmit={onSubmit}>
@@ -284,103 +313,18 @@ function MembershipForm({ onClose }) {
           className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md my-2 mb-6"
           placeholder="amount"
         />
-        <div className="mb-4">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Stack spacing={3}>
-              <DesktopDatePicker
-                label="Seleccionar Fecha de Inicio"
-                inputFormat="MM/DD/YYYY"
-                value={startDate}
-                onChange={handleStartDateChange}
-                textField={(props) => <TextField {...props} fullWidth />}
-                sx={{
-                  "& .MuiCalendar-root": {
-                    background: "black",
-                  },
-                  "& label": {
-                    color: "white",
-                  },
-                  "& label.Mui-focused": {
-                    color: "white",
-                  },
-                  "& .MuiInput-underline:after": {
-                    borderBottomColor: "white",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    color: "white",
-                    "& fieldset": {
-                      borderColor: "white",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "white",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "white",
-                    },
-                    "& MuiFormControl-root": {
-                      background: "black",
-                    },
-                  },
-                  "& .MuiInputBase-input": {
-                    color: "white",
-                  },
-                  "& .MuiButtonBase-root": {
-                    color: "white",
-                  },
-                }}
-              />
-              <DesktopDatePicker
-                label="Seleccionar Fecha de Fin"
-                inputFormat="MM/DD/YYYY"
-                value={endDate}
-                onChange={handleEndDateChange}
-                textField={(props) => <TextField {...props} fullWidth />}
-                sx={{
-                  "& label": {
-                    color: "white",
-                  },
-                  "& label.Mui-focused": {
-                    color: "white",
-                  },
-                  "& .MuiInput-underline:after": {
-                    borderBottomColor: "white",
-                  },
-                  "& .MuiOutlinedInput-root": {
-                    color: "white",
-                    "& fieldset": {
-                      borderColor: "white",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "white",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "white",
-                    },
-                    "& MuiFormControl-root": {
-                      background: "black",
-                    },
-                  },
-                  "& .MuiInputBase-input": {
-                    color: "white",
-                  },
-                  "& .MuiButtonBase-root": {
-                    color: "white",
-                  },
-                  "& .MuiIconButton-root": {
-                    color: "white",
-                  },
-                }}
-              />
-            </Stack>
-          </LocalizationProvider>
-        </div>
-
+        <input
+          type="number"
+          {...register("attendance", { required: true })}
+          className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md my-2 mb-6"
+          placeholder="attendance"
+        />
         <div className="mt-6 flex justify-center">
           <button
             type="submit"
             className="bg-blue-500 hover:bg-blue-700 active:bg-green-500 text-white font-semibold px-4 py-3 rounded-md transition-colors duration-300"
           >
-            Registrar Membresia
+            Editar Membresia
           </button>
         </div>
       </form>
@@ -388,4 +332,4 @@ function MembershipForm({ onClose }) {
   );
 }
 
-export default MembershipForm;
+export default MembershipEditModal;

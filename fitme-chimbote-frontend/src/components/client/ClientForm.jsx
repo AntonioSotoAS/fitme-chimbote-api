@@ -102,12 +102,14 @@ function ClientForm({ onClose }) {
           {...register("photo")}
           className="w-full bg-zinc-700 text-white px-4 py-2 rounded-md my-2"
         />
-        <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 active:bg-green-500 text-white font-semibold px-4 py-2 rounded-md transition-colors duration-300"
-        >
-          Register
-        </button>
+         <div className="mt-6 flex justify-center">
+          <button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 active:bg-green-500 text-white font-semibold px-4 py-3 rounded-md transition-colors duration-300"
+          >
+            Registrar Cliente
+          </button>
+        </div>
       </form>
     </div>
   );
